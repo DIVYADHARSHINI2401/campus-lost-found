@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ item.name }} - Campus Lost & Found{% endblock %}
+
+{% block content %}
+<div class="item-detail-page">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">{{ item.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <!-- Header Section with Status Badge -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="item-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 class="item-title">{{ item.name }}</h1>
+                            <p class="item-category text-muted mb-0">Category: <span class="fw-bold">{{ item.category }}</span></p>
+                        </div>
+                        <span class="badge badge-large bg-{{ item.item_type|lower }}">
+                            <i class="fas fa-{{ item.item_type|lower|slugify }}"></i>
+                            {{ item.get_item_type_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Image Section -->
+            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="item-image-container shadow-lg rounded-4 overflow-hidden border-0 bg-white">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image w-100" style="object-fit: contain; max-height: 500px;">
+                    {% else %}
+                    <div class="item-image-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>No Image Available</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Details Section -->
+            <div class="col-lg-7 col-md-6" data-aos="fade-left" data-aos-delay="200">
+                <div class="details-card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+                    <!-- Description -->
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">Description</h3>
+                        <p class="detail-content">{{ item.description }}</p>
+                    </div>
+
+                    <!-- Location & Date -->
+                    <div class="detail-row">
+                        <div class="detail-item col-md-6">
+                            <div class="detail-icon-box">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="detail-text">
+                                <span class="detail-label">Location</span>
+                                <p class="detail-value">{{ item.location }}</p>
+                            </div>
+                        </div>
+                        <div class="detail-item col-md-6">
+                            <div class="detail-icon-box">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="detail-text">
+                                <span class="detail-label">Date</span>
+                                <p class="detail-value">{{ item.date }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">Contact Information</h3>
+                        
+                        <div class="contact-box">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope contact-icon"></i>
+                                <div>
+                                    <span class="contact-label">Email</span>
+                                    <p class="contact-value">
+                                        <a href="mailto:{{ item.contact_email }}">{{ item.contact_email }}</a>
+                                    </p>
+                                </div>
+                                <a href="mailto:{{ item.contact_email }}" class="btn btn-sm btn-primary ms-auto">
+                                    <i class="fas fa-envelope me-1"></i>Contact
+                                </a>
+                            </div>
+
+                            {% if item.contact_phone %}
+                            <div class="contact-item">
+                                <i class="fas fa-phone contact-icon"></i>
+                                <div>
+                                    <span class="contact-label">Phone</span>
+                                    <p class="contact-value">
+                                        <a href="tel:{{ item.contact_phone }}">{{ item.contact_phone }}</a>
+                                    </p>
+                                </div>
+                                <a href="tel:{{ item.contact_phone }}" class="btn btn-sm btn-outline-primary ms-auto">
+                                    <i class="fas fa-phone me-1"></i>Call
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Item Metadata -->
+                    <div class="detail-section">
+                        <h3 class="detail-section-title">Item Information</h3>
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="metadata-label"><i class="fas fa-user"></i> Posted By</span>
+                                <p class="metadata-value">{{ item.posted_by.username }}</p>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label"><i class="fas fa-clock"></i> Posted On</span>
+                                <p class="metadata-value">{{ item.posted_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Items
+                        </a>
+                        {% if user.is_authenticated and item.posted_by == user %}
+                        <form action="{% url 'delete_item' item.pk %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg me-1">
+                                <i class="fas fa-trash-alt me-2"></i>Delete Item
+                            </button>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'search' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search me-2"></i>Search Similar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

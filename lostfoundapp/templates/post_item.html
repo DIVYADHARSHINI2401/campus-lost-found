@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Item - Campus Lost & Found{% endblock %}
+
+{% block content %}
+<div class="position-relative py-5" style="min-height: 85vh;">
+    <!-- Beautiful Background Image with Purple Overlay -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover fixed; z-index: -2;"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(102,126,234,0.9) 0%, rgba(118,75,162,0.9) 100%); z-index: -1;"></div>
+    
+    <div class="container position-relative z-1 pt-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8" data-aos="zoom-in-up" data-aos-duration="800">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="background-color: var(--primary-bg);">
+                    <!-- Header -->
+                    <div class="card-header border-0 py-4 d-flex align-items-center justify-content-center flex-column" style="background-color: rgba(0, 0, 0, 0.03); border-bottom: 1px solid var(--border-color) !important;">
+                        <h2 class="mb-0 fw-bold text-primary"><i class="fas fa-plus-circle me-2"></i>Post an Item</h2>
+                        <p class="mb-0 mt-2 text-muted">Help your fellow students by reporting items.</p>
+                    </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                        <div>
+                            <strong>Important:</strong> Please provide at least one contact method (email or phone) so others can reach you.
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" class="modern-form needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}
+                                <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" for="{{ form.item_type.id_for_label }}">
+                                <i class="fas fa-tag me-2 text-primary"></i>Item Type
+                            </label>
+                            <div class="btn-group w-100" role="group">
+                                {% for radio in form.item_type %}
+                                <input class="btn-check" type="radio" name="item_type" id="{{ radio.id_for_label }}" value="{{ radio.choice_value }}" {% if radio.choice_value == form.item_type.value %}checked{% endif %} required>
+                                <label class="btn btn-outline-primary py-3 fs-5" for="{{ radio.id_for_label }}">
+                                    {% if radio.data.value == 'lost' %}<i class="fas fa-search-minus me-2"></i>{% else %}<i class="fas fa-hand-holding-heart me-2"></i>{% endif %}
+                                    {{ radio.choice_label }}
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold" for="{{ form.name.id_for_label }}">
+                                    <i class="fas fa-box me-2 text-primary"></i>Item Name
+                                </label>
+                                {{ form.name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold" for="{{ form.category.id_for_label }}">
+                                    <i class="fas fa-list me-2 text-primary"></i>Category
+                                </label>
+                                {{ form.category }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" for="{{ form.description.id_for_label }}">
+                                <i class="fas fa-align-left me-2 text-primary"></i>Description
+                            </label>
+                            {{ form.description }}
+                            <div class="form-text">Provide detailed description including color, brand, or distinguishing features.</div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold" for="{{ form.location.id_for_label }}">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>Location
+                                </label>
+                                {{ form.location }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold" for="{{ form.date.id_for_label }}">
+                                    <i class="fas fa-calendar me-2 text-primary"></i>Date
+                                </label>
+                                {{ form.date }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" for="{{ form.image.id_for_label }}">
+                                <i class="fas fa-camera me-2 text-primary"></i>Item Image
+                            </label>
+                            {{ form.image }}
+                            <div class="form-text">Upload a clear photo of the item (optional but highly recommended).</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-address-book me-2 text-primary"></i>Contact Information</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="{{ form.contact_email.id_for_label }}">Email Address <small class="text-muted">(Optional)</small></label>
+                                    {{ form.contact_email }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="{{ form.contact_phone.id_for_label }}">Phone Number <small class="text-muted">(Optional)</small></label>
+                                    {{ form.contact_phone }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane me-2"></i>Submit Report</button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+})();
+</script>
+{% endblock %}

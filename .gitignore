@@ -1,0 +1,13 @@
+# .gitignore
+*.py[cod]
+__pycache__/
+*.so
+.venv/
+venv/
+db.sqlite3
+media/items/
+.DS_Store
+.idea/
+.vscode/
+*.env
+local_settings.py
